@@ -14,47 +14,25 @@ class HomePage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    // useEffect(() {
-    //   if (productId case final productId?) {
-    //     context.read<HomeCubit>().getNextPage();
-    //   } else {
-    //     context.read<HomeCubit>().getNextPage();
-    //   }
-
-    //   return null;
-    // }, [productId]);
-
     final autoScrollController = useMemoized(() => AutoScrollController());
+    final shouldTryToScrollToProduct = useState(productId != null && productId!.isNotEmpty);
 
     return Scaffold(
       appBar: AppBar(
         title: const BigText('Products'),
+        actions: [
+          IconButton(
+            onPressed: () => showModalBottomSheet(context: context, builder: (_) => const _FiltersSheet()),
+            icon: const Icon(Icons.filter_list),
+          )
+        ],
       ),
       body: Padding(
         padding: mainPadding,
         child: BlocConsumer<HomeCubit, HomeState>(
           listener: (context, state) {
-            print(state);
-            if (state is Loaded && productId != null && productId!.isNotEmpty) {
-              final indexOfProduct = state.pages.last.products.indexWhere((it) => it.id == productId);
-              if (indexOfProduct != -1) {
-                final lengthOfItemsFromPreviousPages =
-                    state.pages.take(state.pages.length - 1).fold<int>(0, (prev, it) => prev + it.products.length);
-                final scrollIndex = lengthOfItemsFromPreviousPages + indexOfProduct;
-                print('Scrolling to index: $scrollIndex');
-                autoScrollController.scrollToIndex(scrollIndex, preferPosition: AutoScrollPosition.begin);
-
-                // WidgetsBinding.instance.addPostFrameCallback((_) {
-                //   print('Scrolling to index: $scrollIndex');
-                //   autoScrollController.scrollToIndex(scrollIndex, preferPosition: AutoScrollPosition.begin);
-                // });
-              } else if (state.isMoreDataAvailable) {
-                context.read<HomeCubit>().getNextPage();
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Item not found')),
-                );
-              }
+            if (state is Loaded && shouldTryToScrollToProduct.value) {
+              _tryToScrollToProduct(state, autoScrollController, shouldTryToScrollToProduct, context);
             }
           },
           builder: (context, state) {
@@ -67,6 +45,29 @@ class HomePage extends HookWidget {
         ),
       ),
     );
+  }
+
+  void _tryToScrollToProduct(
+    Loaded state,
+    AutoScrollController autoScrollController,
+    ValueNotifier<bool> shouldTryToScrollToProduct,
+    BuildContext context,
+  ) {
+    final indexOfProduct = state.pages.last.products.indexWhere((it) => it.id == productId);
+    if (indexOfProduct != -1) {
+      final lengthOfItemsFromPreviousPages =
+          state.pages.take(state.pages.length - 1).fold<int>(0, (prev, it) => prev + it.products.length);
+      final scrollIndex = lengthOfItemsFromPreviousPages + indexOfProduct;
+      autoScrollController.scrollToIndex(scrollIndex, preferPosition: AutoScrollPosition.begin);
+      shouldTryToScrollToProduct.value = false;
+    } else if (state.isMoreDataAvailable) {
+      context.read<HomeCubit>().getNextPage();
+    } else {
+      shouldTryToScrollToProduct.value = false;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Item not found')),
+      );
+    }
   }
 }
 
@@ -177,5 +178,14 @@ class _GetNextPageButton extends StatelessWidget {
         child: const BigText('Get next page'),
       ),
     );
+  }
+}
+
+class _FiltersSheet extends StatelessWidget {
+  const _FiltersSheet({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }
