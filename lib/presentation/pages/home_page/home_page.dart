@@ -14,15 +14,15 @@ class HomePage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    useEffect(() {
-      if (productId case final productId?) {
-        context.read<HomeCubit>().getNextPage();
-      } else {
-        context.read<HomeCubit>().getNextPage();
-      }
+    // useEffect(() {
+    //   if (productId case final productId?) {
+    //     context.read<HomeCubit>().getNextPage();
+    //   } else {
+    //     context.read<HomeCubit>().getNextPage();
+    //   }
 
-      return null;
-    }, [productId]);
+    //   return null;
+    // }, [productId]);
 
     final autoScrollController = useMemoized(() => AutoScrollController());
 
@@ -32,7 +32,31 @@ class HomePage extends HookWidget {
       ),
       body: Padding(
         padding: mainPadding,
-        child: BlocBuilder<HomeCubit, HomeState>(
+        child: BlocConsumer<HomeCubit, HomeState>(
+          listener: (context, state) {
+            print(state);
+            if (state is Loaded && productId != null && productId!.isNotEmpty) {
+              final indexOfProduct = state.pages.last.products.indexWhere((it) => it.id == productId);
+              if (indexOfProduct != -1) {
+                final lengthOfItemsFromPreviousPages =
+                    state.pages.take(state.pages.length - 1).fold<int>(0, (prev, it) => prev + it.products.length);
+                final scrollIndex = lengthOfItemsFromPreviousPages + indexOfProduct;
+                print('Scrolling to index: $scrollIndex');
+                autoScrollController.scrollToIndex(scrollIndex, preferPosition: AutoScrollPosition.begin);
+
+                // WidgetsBinding.instance.addPostFrameCallback((_) {
+                //   print('Scrolling to index: $scrollIndex');
+                //   autoScrollController.scrollToIndex(scrollIndex, preferPosition: AutoScrollPosition.begin);
+                // });
+              } else if (state.isMoreDataAvailable) {
+                context.read<HomeCubit>().getNextPage();
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Item not found')),
+                );
+              }
+            }
+          },
           builder: (context, state) {
             return switch (state) {
               Error() => BigText('Error: ${state.error}'),
@@ -58,9 +82,10 @@ class _LoadedWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
+      controller: controller,
       slivers: [
         _ProductsSliverList(state: state, controller: controller),
-        const _GetNextPageButton(),
+        if (state.isMoreDataAvailable) const _GetNextPageButton(),
       ],
     );
   }
