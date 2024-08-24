@@ -1,15 +1,15 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_recruitment_task/design_system/design_system.dart';
 import 'package:flutter_recruitment_task/models/products_page.dart';
 import 'package:flutter_recruitment_task/presentation/pages/home_page/home_cubit.dart';
 import 'package:flutter_recruitment_task/presentation/widgets/big_text.dart';
 
-const _mainPadding = EdgeInsets.all(16.0);
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, this.productId});
+
+  final String? productId;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class HomePage extends StatelessWidget {
         title: const BigText('Products'),
       ),
       body: Padding(
-        padding: _mainPadding,
+        padding: mainPadding,
         child: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
             return switch (state) {
@@ -58,10 +58,7 @@ class _ProductsSliverList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final products = state.pages
-        .map((page) => page.products)
-        .expand((product) => product)
-        .toList();
+    final products = state.pages.map((page) => page.products).expand((product) => product).toList();
 
     return SliverList.separated(
       itemCount: products.length,
@@ -106,15 +103,13 @@ class _Tags extends StatelessWidget {
 }
 
 class _TagWidget extends StatelessWidget {
-  const _TagWidget(this.tag);
+  _TagWidget(this.tag) : color = Colors.primaries[tag.hashCode % Colors.primaries.length];
 
   final Tag tag;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    const possibleColors = Colors.primaries;
-    final color = possibleColors[Random().nextInt(possibleColors.length)];
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Chip(
