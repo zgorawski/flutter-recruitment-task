@@ -1,18 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_recruitment_task/design_system/design_system.dart';
 import 'package:flutter_recruitment_task/models/products_page.dart';
 import 'package:flutter_recruitment_task/presentation/pages/home_page/home_cubit.dart';
 import 'package:flutter_recruitment_task/presentation/widgets/big_text.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 
-
-class HomePage extends StatelessWidget {
+class HomePage extends HookWidget {
   const HomePage({super.key, this.productId});
 
   final String? productId;
 
   @override
   Widget build(BuildContext context) {
+    useEffect(() {
+      if (productId case final productId?) {
+        context.read<HomeCubit>().getNextPage();
+      } else {
+        context.read<HomeCubit>().getNextPage();
+      }
+
+      return null;
+    }, [productId]);
+
+    final autoScrollController = useMemoized(() => AutoScrollController());
+
     return Scaffold(
       appBar: AppBar(
         title: const BigText('Products'),
@@ -24,7 +37,7 @@ class HomePage extends StatelessWidget {
             return switch (state) {
               Error() => BigText('Error: ${state.error}'),
               Loading() => const BigText('Loading...'),
-              Loaded() => _LoadedWidget(state: state),
+              Loaded() => _LoadedWidget(state: state, controller: autoScrollController),
             };
           },
         ),
@@ -36,15 +49,17 @@ class HomePage extends StatelessWidget {
 class _LoadedWidget extends StatelessWidget {
   const _LoadedWidget({
     required this.state,
+    required this.controller,
   });
 
   final Loaded state;
+  final AutoScrollController controller;
 
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
-        _ProductsSliverList(state: state),
+        _ProductsSliverList(state: state, controller: controller),
         const _GetNextPageButton(),
       ],
     );
@@ -52,9 +67,10 @@ class _LoadedWidget extends StatelessWidget {
 }
 
 class _ProductsSliverList extends StatelessWidget {
-  const _ProductsSliverList({required this.state});
+  const _ProductsSliverList({required this.state, required this.controller});
 
   final Loaded state;
+  final AutoScrollController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +78,12 @@ class _ProductsSliverList extends StatelessWidget {
 
     return SliverList.separated(
       itemCount: products.length,
-      itemBuilder: (context, index) => _ProductCard(products[index]),
+      itemBuilder: (context, index) => AutoScrollTag(
+        key: ValueKey(index),
+        controller: controller,
+        index: index,
+        child: _ProductCard(products[index]),
+      ),
       separatorBuilder: (context, index) => const Divider(),
     );
   }

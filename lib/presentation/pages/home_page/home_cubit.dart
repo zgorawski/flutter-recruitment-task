@@ -23,6 +23,12 @@ class Error extends HomeState {
   final dynamic error;
 }
 
+// class RequestedItemFound extends HomeState {
+//   const RequestedItemFound({required this.index});
+
+//   final int index;
+// }
+
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit(this._productsRepository) : super(const Loading());
 
@@ -31,6 +37,19 @@ class HomeCubit extends Cubit<HomeState> {
   var _param = GetProductsPage(pageNumber: 1);
 
   Future<void> getNextPage() async {
+    try {
+      final totalPages = _pages.lastOrNull?.totalPages;
+      if (totalPages != null && _param.pageNumber > totalPages) return;
+      final newPage = await _productsRepository.getProductsPage(_param);
+      _param = _param.increasePageNumber();
+      _pages.add(newPage);
+      emit(Loaded(pages: _pages));
+    } catch (e) {
+      emit(Error(error: e));
+    }
+  }
+
+  Future<void> getPagesUntilProduct({required String productId}) async {
     try {
       final totalPages = _pages.lastOrNull?.totalPages;
       if (totalPages != null && _param.pageNumber > totalPages) return;

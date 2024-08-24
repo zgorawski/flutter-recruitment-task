@@ -36,7 +36,7 @@ class ItemSelectPage extends HookWidget {
                   MaterialPageRoute(
                     builder: (context) => BlocProvider(
                       create: (context) {
-                        return HomeCubit(getIt<ProductsRepository>())..getNextPage();
+                        return HomeCubit(getIt<ProductsRepository>());
                       },
                       child: HomePage(productId: productIdTextController.text),
                     ),
