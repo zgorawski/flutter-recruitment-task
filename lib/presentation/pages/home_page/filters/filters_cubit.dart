@@ -27,12 +27,8 @@ class FiltersCubit extends Cubit<FiltersState> {
     emit(state.copyWith(priceRangeFilter: () => PriceRangeFilter(priceRange: priceRange)));
   }
 
-  void clearPriceRange() {
-    emit(state.copyWith(priceRangeFilter: () => null));
-  }
-
   void setShowBestOnly(bool showBestOnly) {
-    final newFilter = showBestOnly  ? BestOfferFilter() : null;
+    final newFilter = showBestOnly ? BestOfferFilter() : null;
     emit(state.copyWith(bestOnlyFilter: () => newFilter));
   }
 }

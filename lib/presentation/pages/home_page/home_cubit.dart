@@ -31,12 +31,11 @@ class HomeCubit extends Cubit<HomeState> {
   final ProductsRepository _productsRepository;
   final List<ProductsPage> _pages = [];
   List<ProductFilter> _filters = [];
-  var _param = GetProductsPage(pageNumber: 1);
+  var _param = const GetProductsPage(pageNumber: 1);
 
   Future<void> getNextPage() async {
+    if (!_isMoreDataAvailable()) return;
     try {
-      final totalPages = _pages.lastOrNull?.totalPages;
-      if (totalPages != null && _param.pageNumber > totalPages) return;
       final newPage = await _productsRepository.getProductsPage(_param);
       _param = _param.increasePageNumber();
       _pages.add(newPage);
@@ -48,7 +47,9 @@ class HomeCubit extends Cubit<HomeState> {
 
   void applyFilters({required List<ProductFilter> filters}) {
     _filters = filters;
-    emit(Loaded(products: _computeFilteredProducts(), isMoreDataAvailable: _isMoreDataAvailable()));
+    if (state is Loaded) {
+      emit(Loaded(products: _computeFilteredProducts(), isMoreDataAvailable: _isMoreDataAvailable()));
+    }
   }
 
   List<Product> _computeFilteredProducts() {
@@ -59,7 +60,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   bool _isMoreDataAvailable() {
-    final totalPages = _pages.lastOrNull?.totalPages;
-    return totalPages != null && _param.pageNumber <= totalPages;
+    if (_pages.isEmpty) return true;
+    return _pages.last.totalPages >= _param.pageNumber;
   }
 }

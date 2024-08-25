@@ -49,9 +49,8 @@ class _PriceRangeFilterWidget extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fromTextEditingController =
-        useTextEditingController(text: priceRangeFilter?.priceRange.from.toStringAsFixed(2));
-    final toTextEditingController = useTextEditingController(text: priceRangeFilter?.priceRange.to.toStringAsFixed(2));
+    final fromTextEditingController = useTextEditingController(text: priceRangeFilter?.priceRange.from?.toString());
+    final toTextEditingController = useTextEditingController(text: priceRangeFilter?.priceRange.to?.toString());
     final validationMessage = useState<String?>(null);
 
     void onTextsChange() {
@@ -64,11 +63,7 @@ class _PriceRangeFilterWidget extends HookWidget {
         return;
       }
 
-      if (from == null && to == null) {
-        context.read<FiltersCubit>().clearPriceRange();
-      } else {
-        context.read<FiltersCubit>().setPriceRange((from: from ?? 0, to: to ?? double.infinity));
-      }
+      context.read<FiltersCubit>().setPriceRange((from: from, to: to));
     }
 
     useEffect(() {

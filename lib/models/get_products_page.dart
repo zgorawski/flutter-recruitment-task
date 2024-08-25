@@ -1,5 +1,5 @@
 class GetProductsPage {
-  GetProductsPage({
+  const GetProductsPage({
     required this.pageNumber,
   });
 

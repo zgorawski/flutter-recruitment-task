@@ -19,10 +19,13 @@ dependencies:
   currency_text_input_formatter: 2.2.3
 
 dev_dependencies:
+  mocktail: 1.0.4
+  bloc_test: 9.1.7
   build_runner: 2.3.3
   flutter_lints: 4.0.0
   flutter_test:
     sdk: flutter
+  test: 1.24.9
 
 flutter:
   uses-material-design: true

@@ -1,6 +1,6 @@
 import 'package:flutter_recruitment_task/models/products_page.dart';
 
-typedef PriceRange = ({double from, double to});
+typedef PriceRange = ({double? from, double? to});
 
 abstract class ProductFilter {
   bool isSatisfiedBy({required Product product});
@@ -14,7 +14,9 @@ class PriceRangeFilter implements ProductFilter {
   @override
   bool isSatisfiedBy({required Product product}) {
     final productPrice = (product.offer.promotionalPrice ?? product.offer.regularPrice).amount;
-    return productPrice >= priceRange.from && productPrice <= priceRange.to;
+    if (priceRange.from != null && productPrice < priceRange.from!) return false;
+    if (priceRange.to != null && productPrice > priceRange.to!) return false;
+    return true;
   }
 }
 

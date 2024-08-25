@@ -1,6 +1,6 @@
 # notes_for_reviewer
 
-Poniżej komentarze do zadań i dyskusja wybranego rozwiązania
+Poniżej komentarze do zadań i dyskusja wybranych rozwiązań
 
 ## Zad 1:
 
@@ -17,9 +17,9 @@ W swoim rozwiązaniu wyświetlam dane już po załadowaniu pierwszej strony, naw
 
 ## Zad 3:
 
-- niektóre filtry mogły by mieć sens w rzeczywistej aplikacji, ale nie będą miały efektu na mockowych danych (np. pokazywanie tylko dostepnych produktów)
+- niektóre filtry mogły by mieć sens w rzeczywistej aplikacji, ale nie będą miały efektu na mockowych danych (np. pokazywanie tylko dostepnych produktów - w danych wszystkie są dostępne)
+- zaimplementowałem jedynie dwa filtry z powodu ograniczeń czasowych, ale zaproponowane rozwiazanie jest skalowalne i dodanie kolejnego filtru nie zmieni logiki filtrowania w `HomeCubit`
 
+## Zad 4:
 
-### TODO
-
-? price range jaki (double? double?) -> obsługa nulli w logice filtrowania zamiast prezentacji
+Przygotowane testy nie wyczerpują w pełni tematu otestowanie `HomeCubit`a, ale podobnie jak w przypadku filtrów, kod byłby raczej wtórny dla kolejnych przypadków.
