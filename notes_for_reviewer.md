@@ -1,6 +1,8 @@
 # notes_for_reviewer
 
-Poniżej komentarze do zadań i dyskusja wybranych rozwiązań
+Poniżej komentarze do zadań i dyskusja wybranych rozwiązań.
+
+PS. Mam edytor ustawiony na 120 znaków w linii - to może wpłynąć na formatowanie.
 
 ## Zad 1:
 

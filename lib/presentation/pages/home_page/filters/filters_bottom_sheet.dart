@@ -146,7 +146,9 @@ class _ShowBestOfferFilter extends StatelessWidget {
     return Row(
       children: [
         Checkbox(
-            value: bestOfferFilter != null, onChanged: (value) => context.read<FiltersCubit>().setShowBestOnly(value!)),
+          value: bestOfferFilter != null,
+          onChanged: (value) => context.read<FiltersCubit>().setShowBestOnly(value!),
+        ),
         const SizedBox(width: mainGap),
         const Expanded(child: Text('Show best only'))
       ],
