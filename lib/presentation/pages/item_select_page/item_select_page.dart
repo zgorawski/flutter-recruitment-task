@@ -31,7 +31,7 @@ class ItemSelectPage extends HookWidget {
                   decoration: const InputDecoration(labelText: 'Product ID'),
                 ),
               ),
-              SizedBox(width: mainPadding.right),
+              const SizedBox(width: mainGap),
               FilledButton(
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute(

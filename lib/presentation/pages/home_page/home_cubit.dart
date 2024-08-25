@@ -13,9 +13,9 @@ class Loading extends HomeState {
 }
 
 class Loaded extends HomeState {
-  const Loaded({required this.pages, required this.isMoreDataAvailable});
+  const Loaded({required this.products, required this.isMoreDataAvailable});
 
-  final List<ProductsPage> pages;
+  final List<Product> products;
   final bool isMoreDataAvailable;
 }
 
@@ -30,6 +30,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   final ProductsRepository _productsRepository;
   final List<ProductsPage> _pages = [];
+  List<ProductFilter> _filters = [];
   var _param = GetProductsPage(pageNumber: 1);
 
   Future<void> getNextPage() async {
@@ -39,11 +40,26 @@ class HomeCubit extends Cubit<HomeState> {
       final newPage = await _productsRepository.getProductsPage(_param);
       _param = _param.increasePageNumber();
       _pages.add(newPage);
-      emit(Loaded(pages: _pages, isMoreDataAvailable: newPage.pageNumber < newPage.totalPages));
+      emit(Loaded(products: _computeFilteredProducts(), isMoreDataAvailable: _isMoreDataAvailable()));
     } catch (e) {
       emit(Error(error: e));
     }
   }
 
-  void applyFilters({required Iterable<ProductFilter> filters}) {}
+  void applyFilters({required List<ProductFilter> filters}) {
+    _filters = filters;
+    emit(Loaded(products: _computeFilteredProducts(), isMoreDataAvailable: _isMoreDataAvailable()));
+  }
+
+  List<Product> _computeFilteredProducts() {
+    return _pages
+        .expand((page) => page.products)
+        .where((product) => _filters.every((filter) => filter.isSatisfiedBy(product: product)))
+        .toList();
+  }
+
+  bool _isMoreDataAvailable() {
+    final totalPages = _pages.lastOrNull?.totalPages;
+    return totalPages != null && _param.pageNumber <= totalPages;
+  }
 }

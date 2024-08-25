@@ -18,3 +18,8 @@ W swoim rozwiązaniu wyświetlam dane już po załadowaniu pierwszej strony, naw
 ## Zad 3:
 
 - niektóre filtry mogły by mieć sens w rzeczywistej aplikacji, ale nie będą miały efektu na mockowych danych (np. pokazywanie tylko dostepnych produktów)
+
+
+### TODO
+
+? price range jaki (double? double?) -> obsługa nulli w logice filtrowania zamiast prezentacji

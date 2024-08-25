@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_recruitment_task/design_system/design_system.dart';
 import 'package:flutter_recruitment_task/models/products_page.dart';
 import 'package:flutter_recruitment_task/presentation/pages/home_page/filters/filters_bottom_sheet.dart';
+import 'package:flutter_recruitment_task/presentation/pages/home_page/filters/filters_cubit.dart';
 import 'package:flutter_recruitment_task/presentation/pages/home_page/home_cubit.dart';
 import 'package:flutter_recruitment_task/presentation/widgets/big_text.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
@@ -23,7 +24,17 @@ class HomePage extends HookWidget {
         title: const BigText('Products'),
         actions: [
           IconButton(
-            onPressed: () => showModalBottomSheet(context: context, builder: (_) => const FiltersBottomSheet()),
+            onPressed: () => showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (_) => MultiBlocProvider(
+                providers: [
+                  BlocProvider.value(value: context.read<FiltersCubit>()),
+                  BlocProvider.value(value: context.read<HomeCubit>()),
+                ],
+                child: const FiltersBottomSheet(),
+              ),
+            ),
             icon: const Icon(Icons.filter_list),
           )
         ],
@@ -54,13 +65,10 @@ class HomePage extends HookWidget {
     ValueNotifier<bool> shouldTryToScrollToProduct,
     BuildContext context,
   ) {
-    final indexOfProduct = state.pages.last.products.indexWhere((it) => it.id == productId);
+    final indexOfProduct = state.products.indexWhere((it) => it.id == productId);
     final productWasFound = indexOfProduct != -1;
     if (productWasFound) {
-      final lengthOfItemsFromPreviousPages =
-          state.pages.take(state.pages.length - 1).fold<int>(0, (prev, it) => prev + it.products.length);
-      final scrollIndex = lengthOfItemsFromPreviousPages + indexOfProduct;
-      autoScrollController.scrollToIndex(scrollIndex, preferPosition: AutoScrollPosition.begin);
+      autoScrollController.scrollToIndex(indexOfProduct, preferPosition: AutoScrollPosition.begin);
       shouldTryToScrollToProduct.value = false;
     } else if (state.isMoreDataAvailable) {
       context.read<HomeCubit>().getNextPage();
@@ -84,6 +92,10 @@ class _LoadedWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (state.products.isEmpty && !state.isMoreDataAvailable) {
+      return const Center(child: BigText('No products found, check your filters'));
+    }
+
     return CustomScrollView(
       controller: controller,
       slivers: [
@@ -102,7 +114,7 @@ class _ProductsSliverList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final products = state.pages.map((page) => page.products).expand((product) => product).toList();
+    final products = state.products;
 
     return SliverList.separated(
       itemCount: products.length,
