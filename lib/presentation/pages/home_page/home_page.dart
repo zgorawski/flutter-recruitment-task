@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_recruitment_task/design_system/design_system.dart';
 import 'package:flutter_recruitment_task/models/products_page.dart';
+import 'package:flutter_recruitment_task/presentation/pages/home_page/filters/filters_bottom_sheet.dart';
 import 'package:flutter_recruitment_task/presentation/pages/home_page/home_cubit.dart';
 import 'package:flutter_recruitment_task/presentation/widgets/big_text.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
@@ -22,7 +23,7 @@ class HomePage extends HookWidget {
         title: const BigText('Products'),
         actions: [
           IconButton(
-            onPressed: () => showModalBottomSheet(context: context, builder: (_) => const _FiltersSheet()),
+            onPressed: () => showModalBottomSheet(context: context, builder: (_) => const FiltersBottomSheet()),
             icon: const Icon(Icons.filter_list),
           )
         ],
@@ -54,7 +55,8 @@ class HomePage extends HookWidget {
     BuildContext context,
   ) {
     final indexOfProduct = state.pages.last.products.indexWhere((it) => it.id == productId);
-    if (indexOfProduct != -1) {
+    final productWasFound = indexOfProduct != -1;
+    if (productWasFound) {
       final lengthOfItemsFromPreviousPages =
           state.pages.take(state.pages.length - 1).fold<int>(0, (prev, it) => prev + it.products.length);
       final scrollIndex = lengthOfItemsFromPreviousPages + indexOfProduct;
@@ -178,14 +180,5 @@ class _GetNextPageButton extends StatelessWidget {
         child: const BigText('Get next page'),
       ),
     );
-  }
-}
-
-class _FiltersSheet extends StatelessWidget {
-  const _FiltersSheet({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
   }
 }

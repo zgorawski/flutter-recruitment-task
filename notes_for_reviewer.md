@@ -12,3 +12,9 @@ https://stackoverflow.com/a/53905427/454925
 
 
 ## Zad 2:
+
+W swoim rozwiązaniu wyświetlam dane już po załadowaniu pierwszej strony, nawet jeżeli rządany produkt nie został jeszcze znaleziony i potrzebne jest pobranie kolejnych stron. Uznałem, że przy 3 stronach i typowym opóźnieniu pobierania tego typu danych jest to właściwy UX. Gdyby, w rzeczywistym systemie, potencjalnych podstron do przeszukania byłoby znacząco więcej, mogło by to doprowadzić do sytuacji, gdzie użytkownik rozpoczyna interakcje z aplikacją i po pewnym czasie jest zaskakiwany wymuszonym scrollem do znalezionego produktu. W takim przypadku rozważyłbym opóźnienie pokazywania wyników (jeżeli zmiany na warstwie API nie są możliwe)
+
+## Zad 3:
+
+- niektóre filtry mogły by mieć sens w rzeczywistej aplikacji, ale nie będą miały efektu na mockowych danych (np. pokazywanie tylko dostepnych produktów)

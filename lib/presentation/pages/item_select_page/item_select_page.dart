@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_recruitment_task/design_system/design_system.dart';
 import 'package:flutter_recruitment_task/main.dart';
+import 'package:flutter_recruitment_task/presentation/pages/home_page/filters/filters_cubit.dart';
 import 'package:flutter_recruitment_task/presentation/pages/home_page/home_cubit.dart';
 import 'package:flutter_recruitment_task/presentation/pages/home_page/home_page.dart';
 import 'package:flutter_recruitment_task/presentation/widgets/big_text.dart';
@@ -34,10 +35,17 @@ class ItemSelectPage extends HookWidget {
               FilledButton(
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => BlocProvider(
-                      create: (context) {
-                        return HomeCubit(getIt<ProductsRepository>())..getNextPage();
-                      },
+                    builder: (context) => MultiBlocProvider(
+                      providers: [
+                        BlocProvider<HomeCubit>(
+                          create: (context) {
+                            return HomeCubit(getIt<ProductsRepository>())..getNextPage();
+                          },
+                        ),
+                        BlocProvider<FiltersCubit>(
+                          create: (context) => FiltersCubit(),
+                        ),
+                      ],
                       child: HomePage(productId: productIdTextController.text),
                     ),
                   ),

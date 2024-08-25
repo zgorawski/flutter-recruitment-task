@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_recruitment_task/models/get_products_page.dart';
+import 'package:flutter_recruitment_task/models/product_filters.dart';
 import 'package:flutter_recruitment_task/models/products_page.dart';
 import 'package:flutter_recruitment_task/repositories/products_repository.dart';
 
@@ -43,4 +44,6 @@ class HomeCubit extends Cubit<HomeState> {
       emit(Error(error: e));
     }
   }
+
+  void applyFilters({required Iterable<ProductFilter> filters}) {}
 }
