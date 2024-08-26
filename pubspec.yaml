@@ -13,12 +13,19 @@ dependencies:
   flutter_bloc: 8.1.6
   json_annotation: 4.9.0
   json_serializable: 6.8.0
+  flutter_hooks: 0.20.5
+  get_it: 7.7.0
+  scroll_to_index: 3.0.1
+  currency_text_input_formatter: 2.2.3
 
 dev_dependencies:
+  mocktail: 1.0.4
+  bloc_test: 9.1.7
   build_runner: 2.3.3
   flutter_lints: 4.0.0
   flutter_test:
     sdk: flutter
+  test: 1.24.9
 
 flutter:
   uses-material-design: true
